@@ -1106,6 +1106,7 @@ function engPrepare(snap) {
 			selfPct,
 			adjPct,
 			aw,
+			awLevel: it.awLevel || 0,
 			max: it.max,
 		};
 	});
@@ -2716,8 +2717,8 @@ function renderLegend(result) {
 		const text = document.createElement("span");
 		const name = document.createElement("span");
 		name.className = "legend-name";
-		// 已勾选觉醒的五阶法宝在名称后追加觉醒等级标识
-		name.textContent = `#${i + 1} ${p.name}${p.aw ? `（觉醒${["一", "二", "三", "四", "五"][p.awLevel - 1]}）` : ""}`;
+		// 已勾选觉醒的五阶法宝在名称后追加觉醒等级标识（等级为 0/未设置视为未觉醒，不追加）
+		name.textContent = `#${i + 1} ${p.name}${p.aw && p.awLevel > 0 ? `（${utils.awLevelText(p.awLevel)}）` : ""}`;
 		const meta = document.createElement("span");
 		meta.className = "legend-meta";
 		meta.textContent = ` ${p.ftype}`;
@@ -2763,7 +2764,7 @@ function showCellTip(cell) {
 		}
 	}
 	cellTip.textContent = [
-		`${p.name}${p.aw ? `（觉醒${["一", "二", "三", "四", "五"][p.awLevel - 1]}）` : ""}（${p.ftype}·${utils.getQualityText(p.quality)}）`,
+		`${p.name}${p.aw && p.awLevel > 0 ? `（${utils.awLevelText(p.awLevel)}）` : ""}（${p.ftype}·${utils.getQualityText(p.quality)}）`,
 		`基础: ${fmt3(p.base)}`,
 		`加成: ${bonusParts.length ? bonusParts.join("，") : "无"}`,
 		`最终: ${fmt4(d.finals)}`,
